@@ -6,6 +6,7 @@ Mini Project 2: Recursive Art
 
 import random
 from PIL import Image
+from math import pi, cos, sin
 
 
 # def build_random_function(min_depth, max_depth):
@@ -42,6 +43,12 @@ def evaluate_random_function(f, x, y):
         return x
     if(f[0] == 'y'):
         return y
+    if(f[0] == 'prod'):
+        return evaluate_random_function(f[1], x, y) * evaluate_random_function(f[2], x, y)
+    if(f[0] == 'sin_pi'):
+        return sin(pi * evaluate_random_function(f[1], x, y))
+    if(f[0] == 'cos_pi'):
+        return cos(pi * evaluate_random_function(f[1], x, y))
     else:
         raise(ValueError("Function not defined."))
 
@@ -127,8 +134,7 @@ def color_map(val):
 #                             random.randint(0, 255))  # Blue channel
 #
 #     im.save(filename)
-#
-#
+
 def generate_art(filename, x_size=350, y_size=350):
     """ Generate computational art and save as an image file.
 
@@ -136,8 +142,8 @@ def generate_art(filename, x_size=350, y_size=350):
         x_size, y_size: optional args to set image dimensions (default: 350)
     """
     # Functions for red, green, and blue channels - where the magic happens!
-    red_function = ["x"]
-    green_function = ["y"]
+    red_function = ["prod", ["x"], ["y"]]
+    green_function = ["sin_pi", ["x"]]
     blue_function = ["x"]
 
     # Create image and loop over all pixels
