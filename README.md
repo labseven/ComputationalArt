@@ -1,2 +1,2 @@
 # ComputationalArt
-This is the base repository for the computational art mini project.
+Adam Novotny's computational art mini project for SoftDes 2017.
