@@ -22,10 +22,19 @@ def build_random_function(min_depth, max_depth):
     """
 
     if(max_depth == 1):
-        return ['x','y'][random.randint(1, 2)]
+        return ['x', 'y'][random.randint(0, 1)]
 
-    if()
-    possible_functions = ["sin_pi", "cos_pi" ,"prod"]
+    possible_functions = [["sin_pi", ''], ["cos_pi", ''], ["prod", '', ''], ["avg", '', '']]
+
+    function_num = random.randint(0, len(possible_functions) - 1)
+
+    myfunction = []
+    myfunction.append(possible_functions[function_num][0])
+
+    for x in range(len(possible_functions[function_num]) - 1):
+        myfunction.append(build_random_function(min_depth - 1, max_depth - 1))
+
+    return myfunction
 
 
 def evaluate_random_function(f, x, y):
