@@ -9,19 +9,23 @@ from PIL import Image
 from math import pi, cos, sin
 
 
-# def build_random_function(min_depth, max_depth):
-#     """ Builds a random function of depth at least min_depth and depth
-#         at most max_depth (see assignment writeup for definition of depth
-#         in this context)
-#
-#         min_depth: the minimum depth of the random function
-#         max_depth: the maximum depth of the random function
-#         returns: the randomly generated function represented as a nested list
-#                  (see assignment writeup for details on the representation of
-#                  these functions)
-#     """
-#     # TODO: implement this
-#     pass
+def build_random_function(min_depth, max_depth):
+    """ Builds a random function of depth at least min_depth and depth
+        at most max_depth (see assignment writeup for definition of depth
+        in this context)
+
+        min_depth: the minimum depth of the random function
+        max_depth: the maximum depth of the random function
+        returns: the randomly generated function represented as a nested list
+                 (see assignment writeup for details on the representation of
+                 these functions)
+    """
+
+    if(max_depth == 1):
+        return ['x','y'][random.randint(1, 2)]
+
+    if()
+    possible_functions = ["sin_pi", "cos_pi" ,"prod"]
 
 
 def evaluate_random_function(f, x, y):
@@ -49,6 +53,8 @@ def evaluate_random_function(f, x, y):
         return sin(pi * evaluate_random_function(f[1], x, y))
     if(f[0] == 'cos_pi'):
         return cos(pi * evaluate_random_function(f[1], x, y))
+    if(f[0] == 'avg'):
+        return (evaluate_random_function(f[1], x, y) + evaluate_random_function(f[2], x, y)) / 2
     else:
         raise(ValueError("Function not defined."))
 
