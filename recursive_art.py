@@ -89,27 +89,26 @@ def remap_interval(val,
     return (((val - input_interval_start) * (output_range)) / (input_range)) + output_interval_start
 
 
-# def color_map(val):
-#     """ Maps input value between -1 and 1 to an integer 0-255, suitable for
-#         use as an RGB color code.
-#
-#         val: value to remap, must be a float in the interval [-1, 1]
-#         returns: integer in the interval [0,255]
-#
-#         >>> color_map(-1.0)
-#         0
-#         >>> color_map(1.0)
-#         255
-#         >>> color_map(0.0)
-#         127
-#         >>> color_map(0.5)
-#         191
-#     """
-#     # NOTE: This relies on remap_interval, which you must provide
-#     color_code = remap_interval(val, -1, 1, 0, 255)
-#     return int(color_code)
-#
-#
+def color_map(val):
+    """ Maps input value between -1 and 1 to an integer 0-255, suitable for
+        use as an RGB color code.
+
+        val: value to remap, must be a float in the interval [-1, 1]
+        returns: integer in the interval [0,255]
+
+        >>> color_map(-1.0)
+        0
+        >>> color_map(1.0)
+        255
+        >>> color_map(0.0)
+        127
+        >>> color_map(0.5)
+        191
+    """
+    color_code = remap_interval(val, -1, 1, 0, 255)
+    return int(color_code)
+
+
 # def test_image(filename, x_size=350, y_size=350):
 #     """ Generate test image with random pixels and save as an image file.
 #
@@ -130,38 +129,36 @@ def remap_interval(val,
 #     im.save(filename)
 #
 #
-# def generate_art(filename, x_size=350, y_size=350):
-#     """ Generate computational art and save as an image file.
-#
-#         filename: string filename for image (should be .png)
-#         x_size, y_size: optional args to set image dimensions (default: 350)
-#     """
-#     # Functions for red, green, and blue channels - where the magic happens!
-#     red_function = ["x"]
-#     green_function = ["y"]
-#     blue_function = ["x"]
-#
-#     # Create image and loop over all pixels
-#     im = Image.new("RGB", (x_size, y_size))
-#     pixels = im.load()
-#     for i in range(x_size):
-#         for j in range(y_size):
-#             x = remap_interval(i, 0, x_size, -1, 1)
-#             y = remap_interval(j, 0, y_size, -1, 1)
-#             pixels[i, j] = (
-#                     color_map(evaluate_random_function(red_function, x, y)),
-#                     color_map(evaluate_random_function(green_function, x, y)),
-#                     color_map(evaluate_random_function(blue_function, x, y))
-#                     )
-#
-#     im.save(filename)
-#
-#
+def generate_art(filename, x_size=350, y_size=350):
+    """ Generate computational art and save as an image file.
+
+        filename: string filename for image (should be .png)
+        x_size, y_size: optional args to set image dimensions (default: 350)
+    """
+    # Functions for red, green, and blue channels - where the magic happens!
+    red_function = ["x"]
+    green_function = ["y"]
+    blue_function = ["x"]
+
+    # Create image and loop over all pixels
+    im = Image.new("RGB", (x_size, y_size))
+    pixels = im.load()
+    for i in range(x_size):
+        for j in range(y_size):
+            x = remap_interval(i, 0, x_size, -1, 1)
+            y = remap_interval(j, 0, y_size, -1, 1)
+            pixels[i, j] = (
+                    color_map(evaluate_random_function(red_function, x, y)),
+                    color_map(evaluate_random_function(green_function, x, y)),
+                    color_map(evaluate_random_function(blue_function, x, y))
+                    )
+
+    im.save(filename)
+
+
 if __name__ == '__main__':
     import doctest
     doctest.testmod()
 
     # Create some computational art!
-    # TODO: Un-comment the generate_art function call after you
-    #       implement remap_interval and evaluate_random_function
-    # generate_art("myart.png")
+    generate_art("myart.png")
