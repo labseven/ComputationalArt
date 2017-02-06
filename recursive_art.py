@@ -21,9 +21,14 @@ def build_random_function(min_depth, max_depth):
                  these functions)
     """
 
+    # If at end of chain
     if(max_depth == 1):
         return ['x', 'y'][random.randint(0, 1)]
 
+    # Random cuts out early
+    if(min_depth <= 0):
+        if(random.randint(0, max_depth * 2) == 0):
+            return ['x', 'y'][random.randint(0, 1)]
     possible_functions = [["sin_pi", ''], ["cos_pi", ''], ["prod", '', ''], ["avg", '', '']]
 
     function_num = random.randint(0, len(possible_functions) - 1)
@@ -130,6 +135,7 @@ def color_map(val):
     color_code = remap_interval(val, -1, 1, 0, 255)
     return int(color_code)
 
+
 def generate_art(filename, x_size=350, y_size=350):
     """ Generate computational art and save as an image file.
 
@@ -137,9 +143,9 @@ def generate_art(filename, x_size=350, y_size=350):
         x_size, y_size: optional args to set image dimensions (default: 350)
     """
     # Functions for red, green, and blue channels - where the magic happens!
-    red_function = ["prod", ["x"], ["y"]]
-    green_function = ["sin_pi", ["x"]]
-    blue_function = ["x"]
+    red_function = build_random_function(0, 10)
+    green_function = build_random_function(0, 10)
+    blue_function = build_random_function(0, 10)
 
     # Create image and loop over all pixels
     im = Image.new("RGB", (x_size, y_size))
