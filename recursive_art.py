@@ -21,56 +21,33 @@ def build_random_function(min_depth, max_depth):
                  these functions)
     """
 
+    print("Max depth:", max_depth)
     # If at end of chain
     if(max_depth == 1):
-        return ['x', 'y'][random.randint(0, 1)]
+        print("Hit bottom")
+        return [lambda x, y: x, lambda x, y: y][random.randint(0, 1)]
 
     # Random cuts out early
     if(min_depth <= 0):
         if(random.randint(0, max_depth * 2) == 0):
-            return ['x', 'y'][random.randint(0, 1)]
-    possible_functions = [["sin_pi", ''], ["cos_pi", ''], ["prod", '', ''], ["avg", '', '']]
+            return [lambda x, y: x, lambda x, y: y][random.randint(0, 1)]
+
+    possible_functions = [
+        [lambda f, x, y: sin(pi*f(x, y)), 1],
+        [lambda f, x, y: cos(pi*f(x, y)), 1],
+        [lambda f1, f2, x, y: f1(x, y) + f2(x, y), 2],
+        [lambda f1, f2, x, y: (f1(x, y) + f2(x, y)) / 2, 2]
+        ]
 
     function_num = random.randint(0, len(possible_functions) - 1)
 
-    myfunction = []
-    myfunction.append(possible_functions[function_num][0])
+    curr_function = possible_functions[function_num][0]
+    print(function_num)
 
-    for x in range(len(possible_functions[function_num]) - 1):
-        myfunction.append(build_random_function(min_depth - 1, max_depth - 1))
-
-    return myfunction
-
-
-def evaluate_random_function(f, x, y):
-    """ Evaluate the random function f with inputs x,y
-        Representation of the function f is defined in the assignment writeup
-
-        f: the function to evaluate
-        x: the value of x to be used to evaluate the function
-        y: the value of y to be used to evaluate the function
-        returns: the function value
-
-        >>> evaluate_random_function(["x"],-0.5, 0.75)
-        -0.5
-        >>> evaluate_random_function(["y"],0.1,0.02)
-        0.02
-    """
-
-    if(f[0] == 'x'):
-        return x
-    if(f[0] == 'y'):
-        return y
-    if(f[0] == 'prod'):
-        return evaluate_random_function(f[1], x, y) * evaluate_random_function(f[2], x, y)
-    if(f[0] == 'sin_pi'):
-        return sin(pi * evaluate_random_function(f[1], x, y))
-    if(f[0] == 'cos_pi'):
-        return cos(pi * evaluate_random_function(f[1], x, y))
-    if(f[0] == 'avg'):
-        return (evaluate_random_function(f[1], x, y) + evaluate_random_function(f[2], x, y)) / 2
-    else:
-        raise(ValueError("Function not defined."))
+    if(possible_functions[function_num][1] == 1):
+        return lambda x, y: curr_function(build_random_function(min_depth - 1, max_depth - 1), x, y)
+    if(possible_functions[function_num][1] == 2):
+        return lambda x, y: curr_function(build_random_function(min_depth - 1, max_depth - 1), build_random_function(min_depth-1, max_depth-1), x, y)
 
 
 def remap_interval(val,
@@ -143,9 +120,9 @@ def generate_art(filename, x_size=350, y_size=350):
         x_size, y_size: optional args to set image dimensions (default: 350)
     """
     # Functions for red, green, and blue channels - where the magic happens!
-    red_function = build_random_function(0, 10)
-    green_function = build_random_function(0, 10)
-    blue_function = build_random_function(0, 10)
+    red_function = build_random_function(0, 2)
+    green_function = build_random_function(0, 2)
+    blue_function = build_random_function(0, 2)
 
     # Create image and loop over all pixels
     im = Image.new("RGB", (x_size, y_size))
@@ -155,9 +132,9 @@ def generate_art(filename, x_size=350, y_size=350):
             x = remap_interval(i, 0, x_size, -1, 1)
             y = remap_interval(j, 0, y_size, -1, 1)
             pixels[i, j] = (
-                    color_map(evaluate_random_function(red_function, x, y)),
-                    color_map(evaluate_random_function(green_function, x, y)),
-                    color_map(evaluate_random_function(blue_function, x, y))
+                    color_map(red_function(x, y)),
+                    color_map(green_function(x, y)),
+                    color_map(blue_function(x, y))
                     )
 
     im.save(filename)
