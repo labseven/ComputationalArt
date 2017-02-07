@@ -25,7 +25,7 @@ def build_random_function(min_depth, max_depth):
     # If at end of chain
     if(max_depth == 1):
         print("Hit bottom")
-        return [lambda x, y: x, lambda x, y: y][random.randint(0, 1)]
+        return [lambda x, y: x, lambda x, y: y, lambda x, y: -x, lambda x, y: -y][random.randint(0, 3)]
 
     # Random cuts out early
     if(min_depth <= 0):
@@ -120,9 +120,9 @@ def generate_art(filename, x_size=350, y_size=350):
         x_size, y_size: optional args to set image dimensions (default: 350)
     """
     # Functions for red, green, and blue channels - where the magic happens!
-    red_function = build_random_function(0, 2)
+    red_function = build_random_function(0, 3)
     green_function = build_random_function(0, 2)
-    blue_function = build_random_function(0, 2)
+    blue_function = build_random_function(0, 1)
 
     # Create image and loop over all pixels
     im = Image.new("RGB", (x_size, y_size))
