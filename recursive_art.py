@@ -136,16 +136,16 @@ def color_map(val):
     return int(color_code)
 
 
-def generate_art(filename, x_size=350, y_size=350):
+def generate_art(filename, x_size=350, y_size=350, x_offset=0, y_offset=0):
     """ Generate computational art and save as an image file.
 
         filename: string filename for image (should be .png)
         x_size, y_size: optional args to set image dimensions (default: 350)
     """
     # Functions for red, green, and blue channels - where the magic happens!
-    red_function = build_random_function(0, 10)
-    green_function = build_random_function(0, 10)
-    blue_function = build_random_function(0, 10)
+    red_function = build_random_function(0, 5)
+    green_function = build_random_function(0, 5)
+    blue_function = build_random_function(0, 5)
 
     # Create image and loop over all pixels
     im = Image.new("RGB", (x_size, y_size))
@@ -160,7 +160,22 @@ def generate_art(filename, x_size=350, y_size=350):
                     color_map(evaluate_random_function(blue_function, x, y))
                     )
 
-    im.save(filename)
+    im.save("0" + filename)
+
+    im = Image.new("RGB", (x_size, y_size))
+    pixels = im.load()
+    for i in range(x_size):
+        for j in range(y_size):
+            x = remap_interval(i + x_offset, 0, x_size + x_offset, -1, 1)
+            y = remap_interval(j + y_offset, 0, y_size + y_offset, -1, 1)
+            pixels[i, j] = (
+                    color_map(evaluate_random_function(red_function, x, y)),
+                    color_map(evaluate_random_function(green_function, x, y)),
+                    color_map(evaluate_random_function(blue_function, x, y))
+                    )
+
+    im.save("1" + filename)
+
 
 
 if __name__ == '__main__':
@@ -168,4 +183,5 @@ if __name__ == '__main__':
     doctest.testmod()
 
     # Create some computational art!
-    generate_art("myart.png")
+    # generate_art("myart.png")
+    generate_art("myart.png", 500, 500, 100, -100)
