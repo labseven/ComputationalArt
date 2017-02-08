@@ -9,18 +9,10 @@ class Tree:
 
 
 def total(tree):
-    if tree is None: return 0
+    if tree is None:
+        return 0
+
     return total(tree.left) + total(tree.right) + tree.cargo
-
-
-class TreeFunctions:
-    def __init__(self, value, left=None, right=None):
-        self.cargo = cargo
-        self.left = left
-        self.right = right
-
-    def __str__(self):
-        return
 
 
 l = Tree(1)
