@@ -2,6 +2,7 @@
 
 # Image output
 *.png
+*.avi
 
 ### Python ###
 # Byte-compiled / optimized / DLL files
