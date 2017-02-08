@@ -7,6 +7,7 @@ Mini Project 2: Recursive Art
 import random
 from PIL import Image
 from math import pi, cos, sin
+import sys
 
 
 def build_random_function(min_depth, max_depth):
@@ -35,8 +36,8 @@ def build_random_function(min_depth, max_depth):
     possible_functions = [
         (lambda f, x, y, t: sin(pi * f(x, y, t)), 1),
         (lambda f, x, y, t: cos(pi * f(x, y, t)), 1),
-        (lambda f1, f2, x, y, t: f1(x, y, t) * f2(x, y, t), 2)
-        # (lambda f1, f2, x, y, t: (f1(x, y, t) + f2(x, y, t)) / 2, 2)
+        # (lambda f1, f2, x, y, t: f1(x, y, t) * f2(x, y, t), 2)
+        (lambda f1, f2, x, y, t: (f1(x, y, t) + f2(x, y, t)) / 2, 2)
         ]
 
     function_num = random.randint(0, len(possible_functions) - 1)
@@ -128,9 +129,9 @@ def generate_art(filename, x_size=350, y_size=350):
         x_size, y_size: optional args to set image dimensions (default: 350)
     """
     # Functions for red, green, and blue channels - where the magic happens!
-    red_function = build_random_function(0, 5)
-    green_function = build_random_function(0, 5)
-    blue_function = build_random_function(0, 5)
+    red_function = build_random_function(0, 4)
+    green_function = build_random_function(0, 4)
+    blue_function = build_random_function(0, 4)
 
     # Create image and loop over all pixels
     im = Image.new("RGB", (x_size, y_size))
@@ -147,14 +148,45 @@ def generate_art(filename, x_size=350, y_size=350):
 
     im.save(filename)
 
+def prompt_yn(prompt_str):
+    yes_values = ('y', 'ye', 'yes')
+    no_values = ('n', 'no')
+
+    while True:
+        s = input(prompt_str)
+        if s in yes_values:
+            return True
+        if s in no_values:
+            return False
+        print("Please input yes or no...")
+
 
 def generate_movie(filename, x_size=350, y_size=350, number_of_frames=10):
-    red_function = build_random_function(0, 3)
-    green_function = build_random_function(0, 3)
-    blue_function = build_random_function(0, 3)
 
     im = Image.new("RGB", (x_size, y_size))
     pixels = im.load()
+
+    # Generate test image for review
+
+    t = 0
+    while True:
+        red_function = build_random_function(0, 5)
+        green_function = build_random_function(0, 5)
+        blue_function = build_random_function(0, 5)
+
+        for i in range(x_size):
+            for j in range(y_size):
+                x = remap_interval(i, 0, x_size, -1, 1)
+                y = remap_interval(j, 0, y_size, -1, 1)
+
+                pixels[i, j] = (
+                        color_map(red_function(x, y, t)),
+                        color_map(green_function(x, y, t)),
+                        color_map(blue_function(x, y, t))
+                        )
+        im.show()
+        if prompt_yn("Keep this seed? "):
+            break
 
     for f in range(number_of_frames):
         for i in range(x_size):
@@ -169,10 +201,11 @@ def generate_movie(filename, x_size=350, y_size=350, number_of_frames=10):
                         color_map(blue_function(x, y, t))
                         )
         print("Frame complete:", f)
-        im.save("frames/" + filename + str(f) + ".png")
+        im.save("frames/" + filename + str(f).zfill(3) + ".png")
+
 
 if __name__ == '__main__':
     import doctest
     doctest.testmod()
 
-    generate_movie("frame", 500, 500, 5)
+    generate_movie("frame", 500, 500, 50)
