@@ -25,7 +25,7 @@ def build_random_function(min_depth, max_depth):
     # If at end of chain
     if max_depth == 1:
         # print("Hit bottom")
-        return [lambda x, y: x, lambda x, y: y, lambda x, y: -x, lambda x, y: -y][random.randint(0, 3)]
+        return [lambda x, y, t: x * (1 + .1 * t), lambda x, y, t: y * (1 + .1 * t)][random.randint(0, 1)]
 
     # Random cuts out early
     # if(min_depth <= 0):
@@ -33,10 +33,10 @@ def build_random_function(min_depth, max_depth):
     #         return [lambda x, y: x, lambda x, y: y][random.randint(0, 1)]
 
     possible_functions = [
-        (lambda f, x, y: sin(pi * f(x, y)), 1),
-        (lambda f, x, y: cos(pi * f(x, y)), 1),
-        (lambda f1, f2, x, y: f1(x, y) * f2(x, y), 2),
-        (lambda f1, f2, x, y: (f1(x, y) + f2(x, y)) / 2, 2)
+        (lambda f, x, y, t: sin(pi * f(x, y, t)), 1),
+        (lambda f, x, y, t: cos(pi * f(x, y, t)), 1),
+        (lambda f1, f2, x, y, t: f1(x, y, t) * f2(x, y, t), 2)
+        # (lambda f1, f2, x, y, t: (f1(x, y, t) + f2(x, y, t)) / 2, 2)
         ]
 
     function_num = random.randint(0, len(possible_functions) - 1)
@@ -46,11 +46,12 @@ def build_random_function(min_depth, max_depth):
 
     if possible_functions[function_num][1] == 1:
         nested_function = build_random_function(min_depth - 1, max_depth - 1)
-        return lambda x, y: curr_function(nested_function, x, y)
+        return lambda x, y, t: curr_function(nested_function, x, y, t)
+
     if possible_functions[function_num][1] == 2:
         nested_function1 = build_random_function(min_depth - 1, max_depth - 1)
         nested_function2 = build_random_function(min_depth - 1, max_depth - 1)
-        return lambda x, y: curr_function(nested_function1, nested_function2, x, y)
+        return lambda x, y, t: curr_function(nested_function1, nested_function2, x, y, t)
 
     raise RuntimeError("Did not build a function.")
 
@@ -120,7 +121,7 @@ def color_map(val):
     return int(color_code)
 
 
-def generate_art(filename, x_size=350, y_size=350, x_offset=0, y_offset=0):
+def generate_art(filename, x_size=350, y_size=350):
     """ Generate computational art and save as an image file.
 
         filename: string filename for image (should be .png)
@@ -147,13 +148,31 @@ def generate_art(filename, x_size=350, y_size=350, x_offset=0, y_offset=0):
     im.save(filename)
 
 
+def generate_movie(filename, x_size=350, y_size=350, number_of_frames=10):
+    red_function = build_random_function(0, 3)
+    green_function = build_random_function(0, 3)
+    blue_function = build_random_function(0, 3)
+
+    im = Image.new("RGB", (x_size, y_size))
+    pixels = im.load()
+
+    for f in range(number_of_frames):
+        for i in range(x_size):
+            for j in range(y_size):
+                x = remap_interval(i, 0, x_size, -1, 1)
+                y = remap_interval(j, 0, y_size, -1, 1)
+                t = f
+
+                pixels[i, j] = (
+                        color_map(red_function(x, y, t)),
+                        color_map(green_function(x, y, t)),
+                        color_map(blue_function(x, y, t))
+                        )
+        print("Frame complete:", f)
+        im.save("frames/" + filename + str(f) + ".png")
+
 if __name__ == '__main__':
     import doctest
     doctest.testmod()
 
-    # Create some computational art!
-    # generate_art("myart.png")
-    generate_art("myart.png", 500, 500, 100, -100)
-    x = build_random_function(2, 2)
-    print(x(0.5, 2))
-    print(x(0.5, 2))
+    generate_movie("frame", 500, 500, 5)
