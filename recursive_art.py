@@ -23,7 +23,7 @@ def build_random_function(min_depth, max_depth):
 
     # print("Max depth:", max_depth)
     # If at end of chain
-    if(max_depth == 1):
+    if max_depth == 1:
         # print("Hit bottom")
         return [lambda x, y: x, lambda x, y: y, lambda x, y: -x, lambda x, y: -y][random.randint(0, 3)]
 
@@ -33,22 +33,26 @@ def build_random_function(min_depth, max_depth):
     #         return [lambda x, y: x, lambda x, y: y][random.randint(0, 1)]
 
     possible_functions = [
-        [lambda f, x, y: sin(pi*f(x, y)), 1],
-        [lambda f, x, y: cos(pi*f(x, y)), 1]
-        # [lambda f1, f2, x, y: f1(x, y) + f2(x, y), 2],
-        # [lambda f1, f2, x, y: (f1(x, y) + f2(x, y)) / 2, 2]
+        (lambda f, x, y: sin(pi * f(x, y)), 1),
+        (lambda f, x, y: cos(pi * f(x, y)), 1),
+        (lambda f1, f2, x, y: f1(x, y) * f2(x, y), 2),
+        (lambda f1, f2, x, y: (f1(x, y) + f2(x, y)) / 2, 2)
         ]
 
     function_num = random.randint(0, len(possible_functions) - 1)
 
     curr_function = possible_functions[function_num][0]
-    curr_function = 
     # print(function_num)
 
-    if(possible_functions[function_num][1] == 1):
-        return lambda x, y: curr_function(x, y)
-    # if(possible_functions[function_num][1] == 2):
-    #     return lambda x, y: curr_function(build_random_function(min_depth - 1, max_depth - 1), build_random_function(min_depth-1, max_depth-1), x, y)
+    if possible_functions[function_num][1] == 1:
+        nested_function = build_random_function(min_depth - 1, max_depth - 1)
+        return lambda x, y: curr_function(nested_function, x, y)
+    if possible_functions[function_num][1] == 2:
+        nested_function1 = build_random_function(min_depth - 1, max_depth - 1)
+        nested_function2 = build_random_function(min_depth - 1, max_depth - 1)
+        return lambda x, y: curr_function(nested_function1, nested_function2, x, y)
+
+    raise RuntimeError("Did not build a function.")
 
 
 def remap_interval(val,
@@ -79,12 +83,14 @@ def remap_interval(val,
         1.5
     """
 
-    if(val < input_interval_start):
+    if val < input_interval_start:
+        print("below input bounds")
         return output_interval_start
-    if(val > input_interval_end):
+    if val > input_interval_end:
         print("above input bounds")
         return output_interval_end
-    if(input_interval_start == input_interval_end):
+    if input_interval_start == input_interval_end:
+        print("input interval is 0")
         return output_interval_start
 
     input_range = input_interval_end - input_interval_start
@@ -121,9 +127,9 @@ def generate_art(filename, x_size=350, y_size=350):
         x_size, y_size: optional args to set image dimensions (default: 350)
     """
     # Functions for red, green, and blue channels - where the magic happens!
-    red_function = build_random_function(0, 2)
-    green_function = build_random_function(0, 1)
-    blue_function = build_random_function(0, 1)
+    red_function = build_random_function(0, 15)
+    green_function = build_random_function(0, 15)
+    blue_function = build_random_function(0, 15)
 
     # Create image and loop over all pixels
     im = Image.new("RGB", (x_size, y_size))
