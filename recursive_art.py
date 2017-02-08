@@ -21,33 +21,34 @@ def build_random_function(min_depth, max_depth):
                  these functions)
     """
 
-    print("Max depth:", max_depth)
+    # print("Max depth:", max_depth)
     # If at end of chain
     if(max_depth == 1):
-        print("Hit bottom")
+        # print("Hit bottom")
         return [lambda x, y: x, lambda x, y: y, lambda x, y: -x, lambda x, y: -y][random.randint(0, 3)]
 
     # Random cuts out early
-    if(min_depth <= 0):
-        if(random.randint(0, max_depth * 2) == 0):
-            return [lambda x, y: x, lambda x, y: y][random.randint(0, 1)]
+    # if(min_depth <= 0):
+    #     if(random.randint(0, max_depth * 2) == 0):
+    #         return [lambda x, y: x, lambda x, y: y][random.randint(0, 1)]
 
     possible_functions = [
         [lambda f, x, y: sin(pi*f(x, y)), 1],
-        [lambda f, x, y: cos(pi*f(x, y)), 1],
-        [lambda f1, f2, x, y: f1(x, y) + f2(x, y), 2],
-        [lambda f1, f2, x, y: (f1(x, y) + f2(x, y)) / 2, 2]
+        [lambda f, x, y: cos(pi*f(x, y)), 1]
+        # [lambda f1, f2, x, y: f1(x, y) + f2(x, y), 2],
+        # [lambda f1, f2, x, y: (f1(x, y) + f2(x, y)) / 2, 2]
         ]
 
     function_num = random.randint(0, len(possible_functions) - 1)
 
     curr_function = possible_functions[function_num][0]
-    print(function_num)
+    curr_function = 
+    # print(function_num)
 
     if(possible_functions[function_num][1] == 1):
-        return lambda x, y: curr_function(build_random_function(min_depth - 1, max_depth - 1), x, y)
-    if(possible_functions[function_num][1] == 2):
-        return lambda x, y: curr_function(build_random_function(min_depth - 1, max_depth - 1), build_random_function(min_depth-1, max_depth-1), x, y)
+        return lambda x, y: curr_function(x, y)
+    # if(possible_functions[function_num][1] == 2):
+    #     return lambda x, y: curr_function(build_random_function(min_depth - 1, max_depth - 1), build_random_function(min_depth-1, max_depth-1), x, y)
 
 
 def remap_interval(val,
@@ -120,8 +121,8 @@ def generate_art(filename, x_size=350, y_size=350):
         x_size, y_size: optional args to set image dimensions (default: 350)
     """
     # Functions for red, green, and blue channels - where the magic happens!
-    red_function = build_random_function(0, 3)
-    green_function = build_random_function(0, 2)
+    red_function = build_random_function(0, 2)
+    green_function = build_random_function(0, 1)
     blue_function = build_random_function(0, 1)
 
     # Create image and loop over all pixels
@@ -146,3 +147,7 @@ if __name__ == '__main__':
 
     # Create some computational art!
     generate_art("myart.png")
+
+    x = build_random_function(2, 2)
+    print(x(0.5, 2))
+    print(x(0.5, 2))
