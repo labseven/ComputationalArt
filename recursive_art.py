@@ -36,7 +36,7 @@ def build_random_function(min_depth, max_depth):
     possible_functions = [
         (lambda f, x, y, t: sin(pi * f(x, y, t)), 1),
         (lambda f, x, y, t: cos(pi * f(x, y, t)), 1),
-        # (lambda f1, f2, x, y, t: f1(x, y, t) * f2(x, y, t), 2)
+        (lambda f1, f2, x, y, t: f1(x, y, t) * f2(x, y, t), 2),
         (lambda f1, f2, x, y, t: (f1(x, y, t) + f2(x, y, t)) / 2, 2)
         ]
 
@@ -170,8 +170,8 @@ def generate_movie(filename, x_size=350, y_size=350, number_of_frames=10):
 
     t = 0
     while True:
-        red_function = build_random_function(0, 5)
-        green_function = build_random_function(0, 5)
+        red_function = build_random_function(0, 7)
+        green_function = build_random_function(0, 7)
         blue_function = build_random_function(0, 5)
 
         for i in range(x_size):
@@ -208,4 +208,4 @@ if __name__ == '__main__':
     import doctest
     doctest.testmod()
 
-    generate_movie("frame", 500, 500, 50)
+    generate_movie("frame", 500, 500, 2000)
